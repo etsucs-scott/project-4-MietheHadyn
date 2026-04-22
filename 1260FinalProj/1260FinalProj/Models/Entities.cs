@@ -1,12 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc.Formatters;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.Intrinsics;
 
 namespace _1260FinalProj.Models
 {
     public class Entities
     {
+        [Required]
+        [StringLength(16, ErrorMessage = "Identifier too long (16 character limit).")]
         public int ID { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Required]
+        [StringLength(16, ErrorMessage = "Identifier too long (64 character limit).")]
         public string Category { get; set; }
+        public List<string> Categories = new List<string>() { "Person", "Place", "Thing", "Idea" }; //default list of categories; can be added to by user
         public string Description { get; set; }
         public DateTime LastUpdateDT { get; set; }
         public int LastUpdate { get; set; }
@@ -20,19 +28,20 @@ namespace _1260FinalProj.Models
         //something to generate a random, *UNIQUE* ID 
 
 
-        public Entities(int v1, string v2, string v3, string v4, int v5)
+        public Entities(int v1, string v2, string v3, string v4)
         {
             this.ID = new Random().Next(1, 1000000); // This is a simple way to generate a random ID. In a real application, you would want to ensure uniqueness and handle potential collisions.
             this.Name = v2;
             this.Category = v3;
             this.Description = v4;
-            this.LastUpdate = v5;
+            this.LastUpdateDT = DateTime.Now;
+            this.LastUpdate = UpdateINT();
         }
 
         public Entities() { } //allows empty entity created, attributed added later
         public string FormatItem()
         {
-            return $" ID: {ID.ToString()} \n Name:   {Name} \n Category:   {Category} \n Description:   {Description} \n Last Updated: {LastUpdate}";
+            return $" ID: {ID.ToString()} | Name: {Name} | Category: {Category} | Description: {Description} | Last Updated: {LastUpdate}";
 
         }
     }

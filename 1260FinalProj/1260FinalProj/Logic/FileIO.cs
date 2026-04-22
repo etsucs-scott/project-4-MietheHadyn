@@ -4,33 +4,35 @@ namespace _1260FinalProj.Logic
 {
     public class FileIO
     {
-        string ItmFileType = "txt";
-        string ItmFileName = "Entity_File"; //or should this be { get; set; } to change for each entity?
-        string Itempath;
+        string FileType = "json";
+        string FileName  { get; set; } 
+        string Entitypath;
+        
 
-        public string GetFileName(string Name, int ID) //or Entities.Name?
+
+        public string GetFileName(string Name, int ID) 
         {
             string ItmFileName = Name + "_" + ID;
             return ItmFileName;
         }
         public FileIO()
         {
-            Itempath = $@"{ItmFileName}.{ItmFileType}";
+            Entitypath = $@"wwwroot/Entities/{FileName}.{FileType}";
         }
 
-        public void CreateFile(int ID, string Name, string Category, string Description, DateTime LastUpdate)
+        public void CreateFile(int ID, string Name, string Category, string Description, DateTime LastUpdate) //tell it to write into Entities folder
         {
             GetFileName(Name, ID); //this will set ItmFileName to correct name for file
-            Itempath = $@"{ItmFileName}.{ItmFileType}"; //make sure Itempath is defined w/ correct filename
+            Entitypath = $@"wwwroot/Entities/{FileName}.{FileType}"; //make sure Entitypath is defined w/ correct filename
 
             Console.WriteLine("Please give the name of the contributor?");
             string contributor = Console.ReadLine();
-            string Entry = $"{ID}   {Name}  {Category}  {LastUpdate}    {contributor}"; //this might not be good, but works for now; maybe \n separated?
+            string Entry = $"{ID} | {Name} | {Category} |{Description}| {LastUpdate} | {contributor}"; 
             try
             {
-                using (StreamWriter sw = new StreamWriter(Itempath, true))
+                using (StreamWriter sw = new StreamWriter(Entitypath, true))
                 {
-                    sw.WriteLine(Entry); //Entry is Tab-separated, may change to newline-separated or something else
+                    sw.WriteLine(Entry); //Entry should be '|'-separated
 
                 }
                 Console.WriteLine("File created.");
@@ -47,11 +49,13 @@ namespace _1260FinalProj.Logic
             //i need a way to tell it to look at a pre-existing file, not create a new one
             try
             {
-                //update file stuff
+                //update file stuff, depending on what field is changed, but also update the LastUpdate field to current time
+
+                LastUpdate = DateTime.Now;
             }
             catch (FileNotFoundException)
             {
-                Console.WriteLine($"Error: File '{Itempath}' not found.");
+                Console.WriteLine($"Error: File '{Entitypath}' not found.");
             }
             catch (Exception ex)
             {
@@ -66,11 +70,12 @@ namespace _1260FinalProj.Logic
             try
             {
 
-                var FileItems = File.ReadAllLines(Itempath);
+                var FileItems = File.ReadAllLines(Entitypath);
                 foreach (var line in FileItems)
                 {
-                    string[] parts = line.Split('|');  // split line on '|'
-                    var entity = new Entities();    // create ONE entity per line
+                    string[] parts = line.Split('|');  //split on '|'
+                    var entity = new Entities();    //create ONE entity per line
+                    //I don't think these two are gonna work properly
 
                     foreach (var part in parts)
                     {
@@ -107,7 +112,7 @@ namespace _1260FinalProj.Logic
 
             catch (FileNotFoundException)
             {
-                Console.WriteLine($"Error: File '{Itempath}' not found.");
+                Console.WriteLine($"Error: File '{Entitypath}' not found.");
             }
             catch (Exception ex)
             {

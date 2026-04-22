@@ -1,0 +1,26 @@
+﻿@page "/Totals"
+@rendermode InteractiveServer
+@using _1260FinalProj.Logic
+@using _1260FinalProj.Models
+@attribute [StreamRendering]
+
+<h3>Totals</h3>
+
+@code {
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        // Simulate asynchronous loading to demonstrate streaming rendering
+        await Task.Delay(500);
+
+         //prints the number of entries for each category, method in Searching.cs
+         //get the file path for the folder?
+         
+       //var totals = Searching.CategoryQTY("wwwroot/Entities");
+
+        
+
+    }
+}
