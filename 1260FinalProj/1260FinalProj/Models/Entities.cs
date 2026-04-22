@@ -10,12 +10,12 @@ namespace _1260FinalProj.Models
         [StringLength(16, ErrorMessage = "Identifier too long (16 character limit).")]
         public int ID { get; set; }
         [Required]
-        public string Name { get; set; }
+        public string? Name { get; set; }
         [Required]
         [StringLength(16, ErrorMessage = "Identifier too long (64 character limit).")]
-        public string Category { get; set; }
+        public string? Category { get; set; }
         public List<string> Categories = new List<string>() { "Person", "Place", "Thing", "Idea" }; //default list of categories; can be added to by user
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public DateTime LastUpdateDT { get; set; }
         public int LastUpdate { get; set; }
 
@@ -24,8 +24,6 @@ namespace _1260FinalProj.Models
             LastUpdate = (int)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds; //auto-generated, idk if this works?
             return LastUpdate;
         }
-
-        //something to generate a random, *UNIQUE* ID 
 
 
         public Entities(int v1, string v2, string v3, string v4)

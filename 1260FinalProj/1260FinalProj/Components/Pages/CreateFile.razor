@@ -1,11 +1,67 @@
 ﻿@page "/CreateFile"
+@using _1260FinalProj.Models
 @rendermode InteractiveServer
+@inject ILogger<CreateFile> Logger
 
-<h3>CreateFile</h3>
+<h1>CreateFile</h1>
 
 <p>this page is to create a file, hopefully with individual text boxes for each field.</p>
 
+<h3>Info Entry form</h3>
+
+
+<EditForm Model="Model" OnValidSubmit="Submit" FormName="Entities">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div>
+        <label>
+            Identifier:
+            <InputNumber @bind-Value="Model!.ID" />
+        </label>
+    </div>
+    <div>
+        <label>
+            Category:
+            <InputText @bind-Value="Model!.Name" />
+        </label>
+    </div>
+    <div>
+        <label>
+            Category:
+            <InputText @bind-Value="Model!.Category" />
+        </label>
+    </div>
+    <div>
+        <label>
+            Maximum Accommodation:
+            <InputNumber @bind-Value="Model!.Description" />
+        </label>
+    </div>
+    
+    @* <div>
+        <label>
+            Production Date:
+            <InputDate @bind-Value="Model!.LastUpdateDT" />
+        </label>
+    </div> *@ @*this isn't input, but does need to be considered*@
+    <div>
+        <button type="submit">Submit</button>
+    </div>
+</EditForm>
 
 @code {
+    [SupplyParameterFromForm]
+    private Entities? Model { get; set; }
+
+    protected override void OnInitialized() =>
+        Model ??= new() { LastUpdateDT = DateTime.UtcNow };
+
+    private void Submit()
+    {
+        Logger.LogInformation("Id = {ID} Name = {Name}" + "Category = {Category}" + "Description = {Description} ",
+            Model?.ID, Model?.Name, Model?.Category, Model?.Description);
+    }
+
+    @*now, if I don't do a logger, but instead StreamWrite??*@
 
 }

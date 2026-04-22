@@ -4,7 +4,7 @@ namespace _1260FinalProj.Logic
 {
     public class FileIO
     {
-        string FileType = "json";
+        string FileType = "txt";
         string FileName  { get; set; } 
         string Entitypath;
         
