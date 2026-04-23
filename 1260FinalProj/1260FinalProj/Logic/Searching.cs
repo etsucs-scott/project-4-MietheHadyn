@@ -98,7 +98,7 @@ namespace _1260FinalProj.Logic
             }
         }
 
-        public Dictionary<string, int> CategoryQTY(string Entitypath, List<string> Categories) //christ, let this work
+        public static Dictionary<string, int> CategoryQTY(string Entitypath, List<string> Categories) //christ, let this work
         {
             //admittedly, this seems to work on only one file for now.
             
@@ -109,7 +109,7 @@ namespace _1260FinalProj.Logic
                 categoryCounts[cat] = 0; //initialize counts to 0
             }
 
-            using (var reader = new StreamReader(Entitypath))
+            using (var reader = new StreamReader(Entitypath)) //file.FileName)); via StackOverflow https://stackoverflow.com/questions/8821410/why-is-access-to-the-path-denied??
             {
                 int count = 0;
                 while (!reader.EndOfStream)

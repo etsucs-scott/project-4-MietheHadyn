@@ -21,7 +21,7 @@
     </div>
     <div>
         <label>
-            Category:
+            Name:
             <InputText @bind-Value="Model!.Name" />
         </label>
     </div>
@@ -33,8 +33,8 @@
     </div>
     <div>
         <label>
-            Maximum Accommodation:
-            <InputNumber @bind-Value="Model!.Description" />
+            Description:
+            <InputTextArea @bind-Value="Model!.Description" />
         </label>
     </div>
     
@@ -58,10 +58,10 @@
 
     private void Submit()
     {
-        Logger.LogInformation("Id = {ID} Name = {Name}" + "Category = {Category}" + "Description = {Description} ",
-            Model?.ID, Model?.Name, Model?.Category, Model?.Description);
+        Logger.LogInformation("Id = {ID} Name = {Name}" + "Category = {Category}" + "Description = {Description}" + "Last Update: {LastUpdateDT}",
+            Model?.ID, Model?.Name, Model?.Category, Model?.Description, Model?.LastUpdate);
     }
 
-    @*now, if I don't do a logger, but instead StreamWrite??*@
+    @*now, if I don't do a logger, but instead StreamWrite?? how would I do that?*@
 
 }

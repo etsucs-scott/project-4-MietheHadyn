@@ -21,14 +21,14 @@ namespace _1260FinalProj.Models
 
         public int UpdateINT()
         {
-            LastUpdate = (int)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds; //auto-generated, idk if this works?
+            LastUpdate = (int)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
             return LastUpdate;
         }
 
 
         public Entities(int v1, string v2, string v3, string v4)
         {
-            this.ID = new Random().Next(1, 1000000); // This is a simple way to generate a random ID. In a real application, you would want to ensure uniqueness and handle potential collisions.
+            this.ID = new Random().Next(1, 1000000); //simple way to generate random ID. figure a better way to ensure uniqueness later
             this.Name = v2;
             this.Category = v3;
             this.Description = v4;
@@ -39,7 +39,7 @@ namespace _1260FinalProj.Models
         public Entities() { } //allows empty entity created, attributed added later
         public string FormatItem()
         {
-            return $" ID: {ID.ToString()} | Name: {Name} | Category: {Category} | Description: {Description} | Last Updated: {LastUpdate}";
+            return $" ID: {ID} | Name: {Name} | Category: {Category} | Description: {Description} | Last Updated: {LastUpdateDT}";
 
         }
     }

@@ -20,14 +20,13 @@ namespace _1260FinalProj.Logic
             Entitypath = $@"wwwroot/Entities/{FileName}.{FileType}";
         }
 
-        public void CreateFile(int ID, string Name, string Category, string Description, DateTime LastUpdate) //tell it to write into Entities folder
+        public void CreateFile(int ID, string Name, string Category, string Description, DateTime LastUpdate) 
         {
             GetFileName(Name, ID); //this will set ItmFileName to correct name for file
-            Entitypath = $@"wwwroot/Entities/{FileName}.{FileType}"; //make sure Entitypath is defined w/ correct filename
+            Entitypath = $@"wwwroot/Entities/{FileName}.{FileType}"; //writes into the Entities folder, in the wwwroot directory, with the correct name and file type
 
-            Console.WriteLine("Please give the name of the contributor?");
-            string contributor = Console.ReadLine();
-            string Entry = $"{ID} | {Name} | {Category} |{Description}| {LastUpdate} | {contributor}"; 
+           
+            string Entry = $"{ID} | {Name} | {Category} |{Description}| {LastUpdate}"; 
             try
             {
                 using (StreamWriter sw = new StreamWriter(Entitypath, true))
