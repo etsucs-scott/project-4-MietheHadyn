@@ -22,10 +22,10 @@ namespace _1260FinalProj.Logic
 
         public void CreateFile(int ID, string Name, string Category, string Description, DateTime LastUpdate) 
         {
-            GetFileName(Name, ID); //this will set ItmFileName to correct name for file
-            Entitypath = $@"wwwroot/Entities/{FileName}.{FileType}"; //writes into the Entities folder, in the wwwroot directory, with the correct name and file type
+            FileName = GetFileName(Name, ID); //this will set ItmFileName to correct name for file
+            Entitypath = Path.Combine("wwwroot", "Entities", $"{FileName}.{FileType}"); //writes into the Entities folder, in the wwwroot directory, with the correct name and file type
 
-           
+
             string Entry = $"{ID} | {Name} | {Category} |{Description}| {LastUpdate}"; 
             try
             {
