@@ -52,7 +52,7 @@
         //If totalsRaw is null, Totals stays empty and UI will render CategoryNames w/ empty count
     }
 
-    // Helper to read a category name from various possible shapes (string, KeyValuePair, object with properties)
+    //Helper to read category name from various possible shapes (string, KeyValuePair, object with properties)
     private string GetCategoryName(object o)
     {
         if (o == null) return string.Empty;
@@ -61,7 +61,7 @@
         var t = o.GetType();
 
         var prop = t.GetProperty("Category") 
-                   ?? t.GetProperty("category")
+                   ?? t.GetProperty("Category")
                    ?? t.GetProperty("Key")
                    ?? t.GetProperty("Name");
         if (prop != null)

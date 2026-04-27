@@ -62,23 +62,24 @@
 
     private void Log()
     {
-        Logger.LogInformation("Id = {ID} Name = {Name}" + "Category = {Category}" + "Description = {Description}" + "Last Update: {LastUpdateDT}",
+        Logger.LogInformation("ID = {ID} Name = {Name}" + "Category = {Category}" + "Description = {Description}" + "Last Update: {LastUpdateDT}",
             Model?.ID, Model?.Name, Model?.Category, Model?.Description, Model?.LastUpdate);
     }
     private void Submit()
     {
-        // ensure Entities folder under wwwroot exists and write there
+        //actually create entity here?
+
+        //ensure Entities folder under wwwroot exists and write there
         var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
         Directory.CreateDirectory(entitiesDir);
 
         var fileName = $"entity_{Model?.ID ?? Guid.NewGuid().GetHashCode()}.txt";
         var filePath = Path.Combine(entitiesDir, fileName);
 
-        var content = $"Id: {Model?.ID}|Name: {Model?.Name}|Category: {Model?.Category}|Description: {Model?.Description}|Last Update: {Model?.LastUpdateDT}";
+        var content = $"ID: {Model?.ID}|Name: {Model?.Name}|Category: {Model?.Category}|Description: {Model?.Description}|LastUpdate: {Model?.LastUpdateDT}";
         File.WriteAllText(filePath, content);
     }
 
 
-    @*now, if I don't do a logger, but instead StreamWrite?? how would I do that?*@
 
 }

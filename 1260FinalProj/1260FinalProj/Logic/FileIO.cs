@@ -92,13 +92,13 @@ namespace _1260FinalProj.Logic
                             case "Name":
                                 entity.Name = value;
                                 break;
-                            case "category":
+                            case "Category":
                                 entity.Category = value;
                                 break;
                             case "Description":
                                 entity.Description = value;
                                 break;
-                            case "LastUpdated":
+                            case "LastUpdate":
                                 entity.LastUpdate = int.Parse(value);
                                 break;
                         }
