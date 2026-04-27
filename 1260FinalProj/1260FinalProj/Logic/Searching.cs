@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using Microsoft.VisualBasic.FileIO;
+using System.Xml.Linq;
 
 namespace _1260FinalProj.Logic
 {
@@ -38,8 +39,9 @@ namespace _1260FinalProj.Logic
 
         }
 
-        public void SearchByName(string Name, string Entitypath) //mayble returns a list of file paths
+        public List<string> SearchByName(string Name, string Entitypath) //idk if this works, nor can I really test it rn
         {
+            List<string> FoundFiles = new List<string>();
             using (var reader = new StreamReader(Entitypath))
             {
                 while (!reader.EndOfStream)
@@ -56,15 +58,18 @@ namespace _1260FinalProj.Logic
                         if (key.Equals("Name", StringComparison.OrdinalIgnoreCase) && value.Equals(Name, StringComparison.OrdinalIgnoreCase))
                         {
                             Console.WriteLine($"Match found: {line}"); //temp. return file path or contents
-                            return;
+                            FoundFiles.Add(Entitypath);
+                            
                         }
                         else
                         {
                             Console.WriteLine($"No match found for Name: {Name} in line: {line}");
-                            return; //maybe, once actual return is decided, this returns something to trigger a "we found nothing" screen in UI
+                            Entitypath = Path.Combine("wwwroot", "Entities", $"TextFile.txt"); //idek if this works tbh
+                           
                         }
                     }
                 }
+                return FoundFiles;
             }
         }
 
@@ -98,51 +103,53 @@ namespace _1260FinalProj.Logic
             }
         }
 
-        public static Dictionary<string, int> CategoryQTY(string Entitypath, List<string> Categories) //christ, let this work
+        public Dictionary<string, int> CategoryQTY(string Entitypath, List<string> Categories)
         {
-            //admittedly, this seems to work on only one file for now.
-            
-            //gets number of entries for each category
-            Dictionary<string, int> categoryCounts = new Dictionary<string, int>();
+            var categoryCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+            // initialize counts for the requested categories
             foreach (var cat in Categories)
             {
-                categoryCounts[cat] = 0; //initialize counts to 0
+                categoryCounts[cat] = 0;
             }
 
-            using (var reader = new StreamReader(Entitypath)) //file.FileName)); via StackOverflow https://stackoverflow.com/questions/8821410/why-is-access-to-the-path-denied??
+            if (!File.Exists(Entitypath))
             {
-                int count = 0;
+                // return initialized counts (or throw if you prefer)
+                return categoryCounts;
+            }
+
+            using (var reader = new StreamReader(Entitypath))
+            {
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
                     if (string.IsNullOrWhiteSpace(line)) continue;
 
-
-                    string[] parts = line.Split('|');  //split on '|'
+                    string[] parts = line.Split('|');
                     foreach (var part in parts)
                     {
-                        string[] keyValue = part.Split(':');
-                        if (keyValue.Length < 2) continue; //skip malformed entries
-                        string key = keyValue[0].Trim(); //label
-                        string value = keyValue[1].Trim(); //value
+                        string[] keyValue = part.Split(new[] { ':' }, 2);
+                        if (keyValue.Length < 2) continue;
+
+                        string key = keyValue[0].Trim();
+                        string value = keyValue[1].Trim();
+
                         if (key.Equals("Category", StringComparison.OrdinalIgnoreCase))
                         {
+                            //increment category in provided list
                             if (categoryCounts.ContainsKey(value))
                                 categoryCounts[value]++;
-                            break; //stop checking other parts of the line once a match is found
-                        }
-                        else
-                        {
-                            categoryCounts[value] = categoryCounts.GetValueOrDefault(value, 0) + 1;
-                        }
-                        break; //stop checking other parts of the line once a match is found
-                    }
-                    return categoryCounts;
+                            //track new categories
+                            else categoryCounts[value] = categoryCounts.GetValueOrDefault(value, 0) + 1;
 
+                            break; // stop checking other parts of this line
+                        }
+                    }
                 }
             }
-            return categoryCounts;
 
+            return categoryCounts;
         }
     }
 }

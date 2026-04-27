@@ -1,7 +1,10 @@
 ﻿@page "/CreateFile"
 @using _1260FinalProj.Models
+@using System.IO
 @rendermode InteractiveServer
 @inject ILogger<CreateFile> Logger
+@inject IWebHostEnvironment Env
+
 
 <h1>CreateFile</h1>
 
@@ -45,22 +48,36 @@
         </label>
     </div> *@ @*this isn't input, but does need to be considered*@
     <div>
+        <button type="button" @onclick="Log">log</button>
         <button type="submit">Submit</button>
     </div>
 </EditForm>
 
 @code {
-    [SupplyParameterFromForm]
+    
     private Entities? Model { get; set; }
 
     protected override void OnInitialized() =>
         Model ??= new() { LastUpdateDT = DateTime.UtcNow };
 
-    private void Submit()
+    private void Log()
     {
         Logger.LogInformation("Id = {ID} Name = {Name}" + "Category = {Category}" + "Description = {Description}" + "Last Update: {LastUpdateDT}",
             Model?.ID, Model?.Name, Model?.Category, Model?.Description, Model?.LastUpdate);
     }
+    private void Submit()
+    {
+        // ensure Entities folder under wwwroot exists and write there
+        var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
+        Directory.CreateDirectory(entitiesDir);
+
+        var fileName = $"entity_{Model?.ID ?? Guid.NewGuid().GetHashCode()}.txt";
+        var filePath = Path.Combine(entitiesDir, fileName);
+
+        var content = $"Id: {Model?.ID}|Name: {Model?.Name}|Category: {Model?.Category}|Description: {Model?.Description}|Last Update: {Model?.LastUpdateDT}";
+        File.WriteAllText(filePath, content);
+    }
+
 
     @*now, if I don't do a logger, but instead StreamWrite?? how would I do that?*@
 

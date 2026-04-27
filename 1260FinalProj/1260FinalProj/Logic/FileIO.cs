@@ -17,7 +17,7 @@ namespace _1260FinalProj.Logic
         }
         public FileIO()
         {
-            Entitypath = $@"wwwroot/Entities/{FileName}.{FileType}";
+            Entitypath = Path.Combine("wwwroot", "Entities", $"{FileName}.{FileType}");
         }
 
         public void CreateFile(int ID, string Name, string Category, string Description, DateTime LastUpdate) 

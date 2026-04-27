@@ -3,6 +3,7 @@
 @using System.Linq
 @using _1260FinalProj.Logic
 @using _1260FinalProj.Models
+@inject IWebHostEnvironment Env
 @attribute [StreamRendering]
 
 <h3>Totals</h3>
@@ -26,19 +27,19 @@
 </table>
 
 @code {
-    // kept the original list of category names as defaults
+   
     List<string> CategoryNames = new List<string>() { "Person", "Place", "Thing", "Idea" };
 
-    // store whatever Searching.CategoryQTY returns as a sequence of objects
+   
     List<object> CatTotals = new List<object>();
 
     protected override async Task OnInitializedAsync()
     {
-        // Simulate asynchronous loading to demonstrate streaming rendering
+        //Simulate asynchronous loading to demonstrate streaming rendering
         await Task.Delay(500);
 
-        // Call the searching logic — keep result unassumed and attempt to enumerate it
-        var totalsRaw = Searching.CategoryQTY("wwwroot/Entities", CategoryNames);
+        //Call the searching logic — keep result unassumed and try to enumerate it
+        var totalsRaw = new Searching().CategoryQTY("wwwroot/Entities", CategoryNames);
 
         if (totalsRaw is System.Collections.IEnumerable seq)
         {
@@ -48,7 +49,7 @@
         {
             CatTotals = new List<object> { totalsRaw };
         }
-        // If totalsRaw is null, Totals stays empty and UI will render CategoryNames with empty counts
+        //If totalsRaw is null, Totals stays empty and UI will render CategoryNames w/ empty count
     }
 
     // Helper to read a category name from various possible shapes (string, KeyValuePair, object with properties)

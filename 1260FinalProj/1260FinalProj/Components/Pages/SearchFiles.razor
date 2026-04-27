@@ -1,11 +1,15 @@
 ﻿@page "/SearchFiles"
 @rendermode InteractiveServer
 
-<h3>File Interaction</h3>
+<h3>File Search</h3>
 
-@*some Slight text describing the file? maybe?  *@
-@*do I have separate pages gor the different seearches?? figure out later, pages can be copied/duplicated w/ slight changes*@
+
+@**@
 
 @code {
+    private List<IBrowserFile> allFiles = new();
+    private List<IBrowserFile> filteredFiles = new();
+    private string searchTerm = string.Empty;
+
 
 }

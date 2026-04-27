@@ -7,7 +7,6 @@ namespace _1260FinalProj.Models
     public class Entities
     {
         [Required]
-        [StringLength(16, ErrorMessage = "Identifier too long (16 character limit).")]
         public int ID { get; set; }
         [Required]
         public string? Name { get; set; }
