@@ -54,7 +54,14 @@
     </div>
 </EditForm>
 
+@if (!string.IsNullOrEmpty(StatusMessage))
+{
+    <p>@StatusMessage</p>
+}
+
 @code {
+
+    string StatusMessage;
 
     // placeholder too store data?
     public Entities? PlaceHolder { get; set; } = new Entities
@@ -70,8 +77,6 @@
 
     private Entities? Model { get; set; } = new Entities();
 
-    
-
     protected override void OnInitialized() =>
         Model ??= new() { LastUpdateDT = DateTime.UtcNow };
 
@@ -82,17 +87,27 @@
     }
     private void Submit()
     {
-        //actually create entity here?
+        try
+        {
+            
+            //ensure Entities folder under wwwroot exists and write there
+            var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
+            Directory.CreateDirectory(entitiesDir);
 
-        //ensure Entities folder under wwwroot exists and write there
-        var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
-        Directory.CreateDirectory(entitiesDir);
+            var fileName = $"entity_{Model?.Name}.txt";
+            var filePath = Path.Combine(entitiesDir, fileName);
 
-        var fileName = $"entity_{Model?.Name}.txt";
-        var filePath = Path.Combine(entitiesDir, fileName);
+            var content = $"ID: {Model?.ID}|Name: {Model?.Name}|Category: {Model?.Category}|Description: {Model?.Description}|LastUpdate: {Model?.LastUpdateDT}";
+            File.WriteAllText(filePath, content);
 
-        var content = $"ID: {Model?.ID}|Name: {Model?.Name}|Category: {Model?.Category}|Description: {Model?.Description}|LastUpdate: {Model?.LastUpdateDT}";
-        File.WriteAllText(filePath, content);
+            StatusMessage = $"File created successfully at {filePath}";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error: {ex.Message}";
+        }
+
+
     }
 
 

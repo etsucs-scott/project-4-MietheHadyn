@@ -5,16 +5,10 @@ namespace _1260FinalProj.Logic
 {
     public class Searching
     {
-        //most methods will retrun either filepath or file contents
-        /* Pseudo for looking though the file/Entities folder: (total guess work)
-         * using streamreader to read each file in the folder, then split on '|' and check for matching criteria
-         * for each file in Entities folder
-         *   [search for criteria] split on '|' and check key value parts for match
-         *   return file path(s) or file contents
-         */
-
-        public void SearchByID(int ID, string Entitypath) //returns file path or file contents
+        
+        public List<String> SearchByID(int ID, string Entitypath) //returns file path or file contents
         {
+            List<string> FoundFiles = new List<string>();
             using (var reader = new StreamReader(Entitypath))
             {
                 while (!reader.EndOfStream)
@@ -30,11 +24,19 @@ namespace _1260FinalProj.Logic
                         string value = keyValue[1].Trim(); //value
                         if (key.Equals("ID", StringComparison.OrdinalIgnoreCase) && int.TryParse(value, out int parsedID) && parsedID == ID)
                         {
-                            Console.WriteLine($"Match found: {line}"); //temp. return line or file path
-                            return;
+                            Console.WriteLine($"Match found: {line}"); //temp. return file path or contents
+                            FoundFiles.Add(Entitypath);
+
+                        }
+                        else
+                        {
+                            Console.WriteLine($"No match found for Name: {ID} in line: {line}");
+                            Entitypath = Path.Combine("wwwroot", "Entities", $"TextFile.txt"); //idek if this works tbh
+
                         }
                     }
                 }
+                return FoundFiles;
             }
 
         }
@@ -73,8 +75,9 @@ namespace _1260FinalProj.Logic
             }
         }
 
-        public void SearchByCategory(string Category, string Entitypath) //returns a list of file paths
+        public List<string> SearchByCategory(string Category, string Entitypath) //returns a list of file paths
         {
+            List<string> FoundFiles = new List<string>();
             using (var reader = new StreamReader(Entitypath))
             {
                 while (!reader.EndOfStream)
@@ -91,15 +94,18 @@ namespace _1260FinalProj.Logic
                         if (key.Equals("Category", StringComparison.OrdinalIgnoreCase) && value.Equals(Category, StringComparison.OrdinalIgnoreCase))
                         {
                             Console.WriteLine($"Match found: {line}"); //temp. return file path or contents
-                            return;
+                            FoundFiles.Add(Entitypath);
+
                         }
                         else
                         {
                             Console.WriteLine($"No match found for Name: {Category} in line: {line}");
-                            return; //maybe, once actual return is decided, this returns something to trigger a "we found nothing" screen in UI
+                            Entitypath = Path.Combine("wwwroot", "Entities", $"TextFile.txt"); //Idek if this works
+
                         }
                     }
                 }
+                return FoundFiles;
             }
         }
 
