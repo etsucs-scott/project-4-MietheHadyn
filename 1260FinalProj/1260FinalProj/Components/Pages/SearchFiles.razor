@@ -1,15 +1,38 @@
 ﻿@page "/SearchFiles"
 @rendermode InteractiveServer
+@using System.Linq
+@using System
 
 <h3>File Search</h3>
 
+<form>
+    <input @bind="searchTerm" placeholder="Enter file name..." />
+    <button type="button" @onclick="FilterFiles">Search</button>
+</form>
 
-@**@
+@*I need:
+    A text box to put in the search term, be that whatever is getting searched
+    A place to load or select the returned items(?)
+    and a place to display the information, if not just load the full .txt file into the web page (maybe a large, read-only text area?)
+*@
 
 @code {
+
     private List<IBrowserFile> allFiles = new();
     private List<IBrowserFile> filteredFiles = new();
     private string searchTerm = string.Empty;
 
+    private void FilterFiles()
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            filteredFiles = new List<IBrowserFile>(allFiles);
+            return;
+        }
+
+        filteredFiles = allFiles
+            .Where(f => (f?.Name ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
 
 }

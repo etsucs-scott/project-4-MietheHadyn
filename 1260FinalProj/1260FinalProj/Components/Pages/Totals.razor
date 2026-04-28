@@ -49,10 +49,10 @@
         {
             CatTotals = new List<object> { totalsRaw };
         }
-        //If totalsRaw is null, Totals stays empty and UI will render CategoryNames w/ empty count
+        
     }
 
-    //Helper to read category name from various possible shapes (string, KeyValuePair, object with properties)
+    //Helper to read category name from various possible shapes (string, KeyValuePair, obj w/ properties)
     private string GetCategoryName(object o)
     {
         if (o == null) return string.Empty;
@@ -70,16 +70,16 @@
             return val?.ToString() ?? string.Empty;
         }
 
-        // Fallback to ToString
+        //Fallback to ToString
         return o.ToString();
     }
 
-    // Helper to read a numeric value from various possible shapes
+    //Helper to read a numeric value from various possible shapes
     private string GetCategoryValue(object o)
     {
         if (o == null) return string.Empty;
 
-        // If the item itself is a numeric type
+        //If the item itself is a numeric type
         if (o is byte || o is short || o is int || o is long || o is float || o is double || o is decimal)
             return o.ToString();
 
@@ -97,7 +97,7 @@
             return val?.ToString() ?? string.Empty;
         }
 
-        // For KeyValuePair-like items, Key was handled by GetCategoryName; try indexer or ToString fallback
+        
         return string.Empty;
     }
 }

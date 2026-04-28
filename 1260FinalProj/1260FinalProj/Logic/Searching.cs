@@ -1,10 +1,13 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using System.Xml.Linq;
 
+
 namespace _1260FinalProj.Logic
 {
     public class Searching
     {
+        public int SearchINT { get; set; }
+        public string SearchTerm { get; set; }
         
         public List<String> SearchByID(int ID, string Entitypath) //returns file path or file contents
         {
@@ -113,7 +116,7 @@ namespace _1260FinalProj.Logic
         {
             var categoryCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
-            // initialize counts for the requested categories
+            //initialize counts requested categories
             foreach (var cat in Categories)
             {
                 categoryCounts[cat] = 0;
@@ -121,7 +124,7 @@ namespace _1260FinalProj.Logic
 
             if (!File.Exists(Entitypath))
             {
-                // return initialized counts (or throw if you prefer)
+                //return initial counts
                 return categoryCounts;
             }
 
