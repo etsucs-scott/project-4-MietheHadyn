@@ -15,17 +15,44 @@
     <button type="button" @onclick="FilterName">Search</button>
 </form>
 @* Textarea to display file content*@
-
+@if (!string.IsNullOrEmpty(NameStatusMessage))
+{
+    <p>@NameStatusMessage</p>
+}
+@if (!string.IsNullOrEmpty(selectedFileContent))
+{
+    <div>
+        <label>Result:</label>
+        <textarea readonly style="width:100%;height:300px">@selectedFileContent</textarea>
+    </div>
+}
 
 <form>
     <input @bind="searchID" placeholder="Enter file ID number..." />
     <button type="button" @onclick="FilterID">Search</button>
 </form>
 
+@if (!string.IsNullOrEmpty(IDStatusMessage))
+{
+    <p>@IDStatusMessage</p>
+}
+@if (!string.IsNullOrEmpty(selectedFileContent))
+{
+    <div>
+        <label>Result:</label>
+        <textarea readonly style="width:100%;height:300px">@selectedFileContent</textarea>
+    </div>
+}
+
 <form>
     <input @bind="searchCategory" placeholder="Enter file Category..." />
     <button type="button" @onclick="FilterCategory">Search</button>
 </form>
+
+@if (!string.IsNullOrEmpty(CategoryStatusMessage))
+{
+    <p>@CategoryStatusMessage</p>
+}
 
 @if (!string.IsNullOrEmpty(selectedFileContent))
 {
@@ -36,10 +63,11 @@
 }
 
 @*I need:
-    A text box to put in the search term, be that whatever is getting searched
+    A text box to put in the search term, be that whatever is getting searched [check]
     A place to load or select the returned items(?)
     and a place to display the information, if not just load the full .txt file into the web page (maybe a large, read-only text area?)
 *@
+
 
 @code {
 
@@ -50,13 +78,16 @@
     private string searchCategory = string.Empty;
     private string selectedFileContent = string.Empty;
 
-    
+    string IDStatusMessage = string.Empty;
+    string NameStatusMessage = string.Empty;
+    string CategoryStatusMessage = string.Empty;
 
     private void FilterName()
     {
         var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
         Directory.CreateDirectory(entitiesDir);
-        
+        SearchByName(searchName, entitiesDir);
+        NameStatusMessage = $"Searched for Name: {searchName}";
     }
 
     private void FilterID()
@@ -64,6 +95,7 @@
         var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
         Directory.CreateDirectory(entitiesDir);
         SearchByID(searchID, entitiesDir);
+        IDStatusMessage = $"Searched for ID: {searchID}";
 
     }
 
@@ -71,6 +103,7 @@
     {
         var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
         Directory.CreateDirectory(entitiesDir);
-
+        SearchByCategory(searchCategory, entitiesDir);
+        CategoryStatusMessage = $"Searched for Category: {searchCategory}";
     }
 }
