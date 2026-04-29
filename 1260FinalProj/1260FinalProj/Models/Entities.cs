@@ -18,6 +18,8 @@ namespace _1260FinalProj.Models
         public DateTime LastUpdateDT { get; set; }
         public int LastUpdate { get; set; }
 
+        public object Entity; 
+
         public int UpdateINT()
         {
             LastUpdate = (int)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;

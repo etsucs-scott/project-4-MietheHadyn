@@ -2,13 +2,38 @@
 @rendermode InteractiveServer
 @using System.Linq
 @using System
+@using System.IO
+@using _1260FinalProj.Models
+@using static _1260FinalProj.Logic.Searching
+@inject IWebHostEnvironment Env
 
-<h3>File Search</h3>
+
+<h2>File Search</h2>
 
 <form>
-    <input @bind="searchTerm" placeholder="Enter file name..." />
-    <button type="button" @onclick="FilterFiles">Search</button>
+    <input @bind="searchName" placeholder="Enter file name..." />
+    <button type="button" @onclick="FilterName">Search</button>
 </form>
+@* Textarea to display file content*@
+
+
+<form>
+    <input @bind="searchID" placeholder="Enter file ID number..." />
+    <button type="button" @onclick="FilterID">Search</button>
+</form>
+
+<form>
+    <input @bind="searchCategory" placeholder="Enter file Category..." />
+    <button type="button" @onclick="FilterCategory">Search</button>
+</form>
+
+@if (!string.IsNullOrEmpty(selectedFileContent))
+{
+    <div>
+        <label>Result:</label>
+        <textarea readonly style="width:100%;height:300px">@selectedFileContent</textarea>
+    </div>
+}
 
 @*I need:
     A text box to put in the search term, be that whatever is getting searched
@@ -20,19 +45,32 @@
 
     private List<IBrowserFile> allFiles = new();
     private List<IBrowserFile> filteredFiles = new();
-    private string searchTerm = string.Empty;
+    private int searchID = 0;
+    private string searchName = string.Empty;
+    private string searchCategory = string.Empty;
+    private string selectedFileContent = string.Empty;
 
-    private void FilterFiles()
+    
+
+    private void FilterName()
     {
-        if (string.IsNullOrWhiteSpace(searchTerm))
-        {
-            filteredFiles = new List<IBrowserFile>(allFiles);
-            return;
-        }
-
-        filteredFiles = allFiles
-            .Where(f => (f?.Name ?? string.Empty).Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
-            .ToList();
+        var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
+        Directory.CreateDirectory(entitiesDir);
+        
     }
 
+    private void FilterID()
+    {
+        var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
+        Directory.CreateDirectory(entitiesDir);
+        SearchByID(searchID, entitiesDir);
+
+    }
+
+    private void FilterCategory()
+    {
+        var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
+        Directory.CreateDirectory(entitiesDir);
+
+    }
 }

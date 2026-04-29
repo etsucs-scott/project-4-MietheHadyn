@@ -62,7 +62,7 @@ namespace _1260FinalProj.Logic
             }
         }
 
-        public void LoadFile()
+        public void LoadFile(string EntityPath)
         {
             //pulls info from files, into the appropriate fields for the entities
 
@@ -73,8 +73,8 @@ namespace _1260FinalProj.Logic
                 foreach (var line in FileItems)
                 {
                     string[] parts = line.Split('|');  //split on '|'
-                    var entity = new Entities();    //create ONE entity per line
-                    //I don't think these two are gonna work properly
+                    var entity = new Entities();    //create ONE entity per file
+                    
 
                     foreach (var part in parts)
                     {

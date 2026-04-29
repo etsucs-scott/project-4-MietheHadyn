@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using System.Xml.Linq;
-
+﻿using _1260FinalProj.Models;
 
 namespace _1260FinalProj.Logic
 {
@@ -8,14 +6,17 @@ namespace _1260FinalProj.Logic
     {
         public int SearchINT { get; set; }
         public string SearchTerm { get; set; }
-        
-        public List<String> SearchByID(int ID, string Entitypath) //returns file path or file contents
+
+
+
+        public static List<Entities> SearchByID(int ID, string Entitypath) //returns file path or file contents
         {
-            List<string> FoundFiles = new List<string>();
+            List<Entities> FoundFiles = new List<Entities>();
             using (var reader = new StreamReader(Entitypath))
             {
                 while (!reader.EndOfStream)
                 {
+                    var entity = new Entities();
                     var line = reader.ReadLine();
                     if (string.IsNullOrWhiteSpace(line)) continue; //skip empty lines
                     string[] parts = line.Split('|');  //split on '|'
@@ -27,9 +28,26 @@ namespace _1260FinalProj.Logic
                         string value = keyValue[1].Trim(); //value
                         if (key.Equals("ID", StringComparison.OrdinalIgnoreCase) && int.TryParse(value, out int parsedID) && parsedID == ID)
                         {
-                            Console.WriteLine($"Match found: {line}"); //temp. return file path or contents
-                            FoundFiles.Add(Entitypath);
-
+                            //match found
+                            switch (key)  //this maps each value into its proper attribute
+                            {
+                                case "ID":
+                                    entity.ID = int.Parse(value);
+                                    break;
+                                case "Name":
+                                    entity.Name = value;
+                                    break;
+                                case "Category":
+                                    entity.Category = value;
+                                    break;
+                                case "Description":
+                                    entity.Description = value;
+                                    break;
+                                case "LastUpdate":
+                                    entity.LastUpdate = int.Parse(value);
+                                    break;
+                            }
+                            FoundFiles.Add(entity); //if this works, apply to all search methods
                         }
                         else
                         {
@@ -44,13 +62,14 @@ namespace _1260FinalProj.Logic
 
         }
 
-        public List<string> SearchByName(string Name, string Entitypath) //idk if this works, nor can I really test it rn
+        public static List<Entities> SearchByName(string Name, string Entitypath) //idk if this works, nor can I really test it rn
         {
-            List<string> FoundFiles = new List<string>();
+            List<Entities> FoundFiles = new List<Entities>();
             using (var reader = new StreamReader(Entitypath))
             {
                 while (!reader.EndOfStream)
                 {
+                    var entity = new Entities();
                     var line = reader.ReadLine();
                     if (string.IsNullOrWhiteSpace(line)) continue; //skip empty lines
                     string[] parts = line.Split('|');  //split on '|'
@@ -62,15 +81,32 @@ namespace _1260FinalProj.Logic
                         string value = keyValue[1].Trim(); //value
                         if (key.Equals("Name", StringComparison.OrdinalIgnoreCase) && value.Equals(Name, StringComparison.OrdinalIgnoreCase))
                         {
-                            Console.WriteLine($"Match found: {line}"); //temp. return file path or contents
-                            FoundFiles.Add(Entitypath);
-                            
+                            //match found
+                            switch (key)  //this maps each value into its proper attribute
+                            {
+                                case "ID":
+                                    entity.ID = int.Parse(value);
+                                    break;
+                                case "Name":
+                                    entity.Name = value;
+                                    break;
+                                case "Category":
+                                    entity.Category = value;
+                                    break;
+                                case "Description":
+                                    entity.Description = value;
+                                    break;
+                                case "LastUpdate":
+                                    entity.LastUpdate = int.Parse(value);
+                                    break;
+                            }
+                            FoundFiles.Add(entity);
                         }
                         else
                         {
                             Console.WriteLine($"No match found for Name: {Name} in line: {line}");
                             Entitypath = Path.Combine("wwwroot", "Entities", $"TextFile.txt"); //idek if this works tbh
-                           
+
                         }
                     }
                 }
@@ -78,13 +114,16 @@ namespace _1260FinalProj.Logic
             }
         }
 
-        public List<string> SearchByCategory(string Category, string Entitypath) //returns a list of file paths
+
+
+        public List<Entities> SearchByCategory(string Category, string Entitypath) //returns a list of file paths
         {
-            List<string> FoundFiles = new List<string>();
+            List<Entities> FoundFiles = new List<Entities>();
             using (var reader = new StreamReader(Entitypath))
             {
                 while (!reader.EndOfStream)
                 {
+                    var entity = new Entities();
                     var line = reader.ReadLine();
                     if (string.IsNullOrWhiteSpace(line)) continue; //skip empty lines
                     string[] parts = line.Split('|');  //split on '|'
@@ -96,9 +135,26 @@ namespace _1260FinalProj.Logic
                         string value = keyValue[1].Trim(); //value
                         if (key.Equals("Category", StringComparison.OrdinalIgnoreCase) && value.Equals(Category, StringComparison.OrdinalIgnoreCase))
                         {
-                            Console.WriteLine($"Match found: {line}"); //temp. return file path or contents
-                            FoundFiles.Add(Entitypath);
-
+                            //match found
+                            switch (key)  //this maps each value into its proper attribute
+                            {
+                                case "ID":
+                                    entity.ID = int.Parse(value);
+                                    break;
+                                case "Name":
+                                    entity.Name = value;
+                                    break;
+                                case "Category":
+                                    entity.Category = value;
+                                    break;
+                                case "Description":
+                                    entity.Description = value;
+                                    break;
+                                case "LastUpdate":
+                                    entity.LastUpdate = int.Parse(value);
+                                    break;
+                            }
+                            FoundFiles.Add(entity);
                         }
                         else
                         {
