@@ -1,42 +1,10 @@
 ﻿using _1260FinalProj.Models;
+using System.Xml.Linq;
 
 namespace _1260FinalProj.Logic
 {
     public class Searching
     {
-        public int SearchINT { get; set; }
-        public string SearchTerm { get; set; }
-
-
-
-        //         if (key.Equals("ID", StringComparison.OrdinalIgnoreCase) && int.TryParse(value, out int parsedID) && parsedID == ID)
-        //                                {
-        //                                    //match found
-        //                                    isMatch = true;
-        //                                    switch (key)  //this maps each value into its proper attribute
-        //                                    {
-        //                                        case "ID":
-        //                                            entity.ID = int.Parse(value);
-        //                                            break;
-        //                                        case "Name":
-        //                                            entity.Name = value;
-        //                                            break;
-        //                                        case "Category":
-        //                                            entity.Category = value;
-        //                                            break;
-        //                                        case "Description":
-        //                                            entity.Description = value;
-        //                                            break;
-        //                                        case "LastUpdate":
-        //                                            entity.LastUpdate = int.Parse(value);
-        //                                            break;
-        //                                    }
-
-        //}
-        //if (isMatch)
-        //{
-        //    FoundFiles.Add(entity);
-        //}
 
         public static List<Entities> SearchByID(int ID, string Entitypath)
         {
@@ -78,45 +46,49 @@ namespace _1260FinalProj.Logic
                             var key = kv[0].Trim();
                             var value = kv[1].Trim();
 
-                            if (key.Equals("ID", StringComparison.OrdinalIgnoreCase) && int.TryParse(value, out int parsedID) && parsedID == ID)
+                            // populate all fields for this line
+                            if (key.Equals("ID", StringComparison.OrdinalIgnoreCase))
                             {
-                                //match found
-                                isMatch = true;
-                                switch (key)  //this maps each value into its proper attribute
+                                if (int.TryParse(value, out var parsedId))
                                 {
-                                    case "ID":
-                                        entity.ID = int.Parse(value);
-                                        break;
-                                    case "Name":
-                                        entity.Name = value;
-                                        break;
-                                    case "Category":
-                                        entity.Category = value;
-                                        break;
-                                    case "Description":
-                                        entity.Description = value;
-                                        break;
-                                    case "LastUpdate":
-                                        entity.LastUpdate = int.Parse(value);
-                                        break;
+                                    entity.ID = parsedId;
+                                    if (parsedId == ID) isMatch = true; //compare ID
                                 }
-
                             }
-                            if (isMatch)
+                            else if (key.Equals("Name", StringComparison.OrdinalIgnoreCase))
                             {
-                                FoundFiles.Add(entity);
+                                entity.Name = value;
+                            }
+                            else if (key.Equals("Category", StringComparison.OrdinalIgnoreCase))
+                            {
+                                entity.Category = value;
+                            }
+                            else if (key.Equals("Description", StringComparison.OrdinalIgnoreCase))
+                            {
+                                entity.Description = value;
+                            }
+                            else if (key.Equals("LastUpdate", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (int.TryParse(value, out var lu))
+                                {
+                                    entity.LastUpdate = lu;
+                                    entity.LastUpdateDT = new DateTime(1970, 1, 1).AddSeconds(lu);
+                                }
                             }
                         }
+
+                        // add the fully-populated entity only if it matched
+                        if (isMatch)
+                            FoundFiles.Add(entity);
                     }
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    // skip files we cannot access; optionally log the path
+                    // skip unreadable files (or log)
                     continue;
                 }
                 catch (IOException)
                 {
-                    // skip problematic files; optionally log
                     continue;
                 }
             }
@@ -125,9 +97,9 @@ namespace _1260FinalProj.Logic
         }
 
 
-        public static List<Entities> SearchByName(string Name, string Entitypath) //idk if this works, nor can I really test it rn
+        public static List<Entities> SearchByName(string Name, string Entitypath) 
         {
-            bool isMatch = false;
+            
             List<Entities> FoundFiles = new List<Entities>();
             IEnumerable<string> filesToSearch;
 
@@ -157,7 +129,7 @@ namespace _1260FinalProj.Logic
 
                         var entity = new Entities();
                         var parts = line.Split('|');
-
+                        bool isMatch = false;
 
                         foreach (var part in parts)
                         {
@@ -166,45 +138,50 @@ namespace _1260FinalProj.Logic
                             var key = kv[0].Trim();
                             var value = kv[1].Trim();
 
-                            if (key.Equals("Name", StringComparison.OrdinalIgnoreCase) && value.Equals(Name, StringComparison.OrdinalIgnoreCase))
+                            //populate all fields for this line
+                            if (key.Equals("ID", StringComparison.OrdinalIgnoreCase))
                             {
-                                //match found
-                                isMatch = true;
-                                switch (key)  //this maps each value into its proper attribute
+                                if (int.TryParse(value, out var parsedId))
                                 {
-                                    case "ID":
-                                        entity.ID = int.Parse(value);
-                                        break;
-                                    case "Name":
-                                        entity.Name = value;
-                                        break;
-                                    case "Category":
-                                        entity.Category = value;
-                                        break;
-                                    case "Description":
-                                        entity.Description = value;
-                                        break;
-                                    case "LastUpdate":
-                                        entity.LastUpdate = int.Parse(value);
-                                        break;
+                                    entity.ID = parsedId;
+                                    
                                 }
-
                             }
-                            if (isMatch)
+                            else if (key.Equals("Name", StringComparison.OrdinalIgnoreCase))
                             {
-                                FoundFiles.Add(entity);
+                                entity.Name = value;
+                                if (value == Name) isMatch = true; //compare Name
+                            }
+                            else if (key.Equals("Category", StringComparison.OrdinalIgnoreCase))
+                            {
+                                entity.Category = value;
+                            }
+                            else if (key.Equals("Description", StringComparison.OrdinalIgnoreCase))
+                            {
+                                entity.Description = value;
+                            }
+                            else if (key.Equals("LastUpdate", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (int.TryParse(value, out var lu))
+                                {
+                                    entity.LastUpdate = lu;
+                                    entity.LastUpdateDT = new DateTime(1970, 1, 1).AddSeconds(lu);
+                                }
                             }
                         }
+
+                        // add the fully-populated entity only if it matched
+                        if (isMatch)
+                            FoundFiles.Add(entity);
                     }
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    // skip files we cannot access; optionally log the path
+                    // skip unreadable files (or log)
                     continue;
                 }
                 catch (IOException)
                 {
-                    // skip problematic files; optionally log
                     continue;
                 }
             }
@@ -214,9 +191,9 @@ namespace _1260FinalProj.Logic
 
 
 
-        public static List<Entities> SearchByCategory(string Category, string Entitypath) //returns a list of file paths
+        public static List<Entities> SearchByCategory(string Category, string Entitypath) 
         {
-            bool isMatch = false;
+            
             List<Entities> FoundFiles = new List<Entities>();
             IEnumerable<string> filesToSearch;
 
@@ -246,6 +223,7 @@ namespace _1260FinalProj.Logic
 
                         var entity = new Entities();
                         var parts = line.Split('|');
+                        bool isMatch = false;
 
                         foreach (var part in parts)
                         {
@@ -254,44 +232,50 @@ namespace _1260FinalProj.Logic
                             var key = kv[0].Trim();
                             var value = kv[1].Trim();
 
-                            if (key.Equals("Category", StringComparison.OrdinalIgnoreCase) && value.Equals(Category, StringComparison.OrdinalIgnoreCase))
+                            //populate all fields for this line
+                            if (key.Equals("ID", StringComparison.OrdinalIgnoreCase))
                             {
-                                //match found
-                                switch (key)  //this maps each value into its proper attribute
+                                if (int.TryParse(value, out var parsedId))
                                 {
-                                    case "ID":
-                                        entity.ID = int.Parse(value);
-                                        break;
-                                    case "Name":
-                                        entity.Name = value;
-                                        break;
-                                    case "Category":
-                                        entity.Category = value;
-                                        break;
-                                    case "Description":
-                                        entity.Description = value;
-                                        break;
-                                    case "LastUpdate":
-                                        entity.LastUpdate = int.Parse(value);
-                                        break;
-                                }
+                                    entity.ID = parsedId;
 
+                                }
                             }
-                            if (isMatch)
+                            else if (key.Equals("Name", StringComparison.OrdinalIgnoreCase))
                             {
-                                FoundFiles.Add(entity);
+                                entity.Name = value;
+                            }
+                            else if (key.Equals("Category", StringComparison.OrdinalIgnoreCase))
+                            {
+                                entity.Category = value;
+                                if (value == Category) isMatch = true; //compare Name
+                            }
+                            else if (key.Equals("Description", StringComparison.OrdinalIgnoreCase))
+                            {
+                                entity.Description = value;
+                            }
+                            else if (key.Equals("LastUpdate", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (int.TryParse(value, out var lu))
+                                { 
+                                    entity.LastUpdate = lu;
+                                    entity.LastUpdateDT = new DateTime(1970, 1, 1).AddSeconds(lu);
+                                }
                             }
                         }
+
+                        // add the fully-populated entity only if it matched
+                        if (isMatch)
+                            FoundFiles.Add(entity);
                     }
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    // skip files we cannot access; optionally log the path
+                    // skip unreadable files (or log)
                     continue;
                 }
                 catch (IOException)
                 {
-                    // skip problematic files; optionally log
                     continue;
                 }
             }
@@ -347,5 +331,7 @@ namespace _1260FinalProj.Logic
 
             return categoryCounts;
         }
+
+
     }
 }

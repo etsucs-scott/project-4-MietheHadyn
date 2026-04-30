@@ -19,11 +19,11 @@
 {
     <p>@NameStatusMessage</p>
 }
-@if (!string.IsNullOrEmpty(selectedFileContent))
+@if (!string.IsNullOrEmpty(NAMEselectedFileContent))
 {
     <div>
         <label>Result:</label>
-        <textarea readonly style="width:100%;height:300px">@selectedFileContent</textarea>
+        <textarea readonly style="width:100%;height:300px">@NAMEselectedFileContent</textarea>
     </div>
 }
 
@@ -36,11 +36,11 @@
 {
     <p>@IDStatusMessage</p>
 }
-@if (!string.IsNullOrEmpty(selectedFileContent))
+@if (!string.IsNullOrEmpty(IDselectedFileContent))
 {
     <div>
         <label>Result:</label>
-        <textarea readonly style="width:100%;height:300px">@selectedFileContent</textarea>
+        <textarea readonly style="width:100%;height:300px">@IDselectedFileContent</textarea>
     </div>
 }
 
@@ -54,11 +54,11 @@
     <p>@CategoryStatusMessage</p>
 }
 
-@if (!string.IsNullOrEmpty(selectedFileContent))
+@if (!string.IsNullOrEmpty(CATselectedFileContent))
 {
     <div>
         <label>Result:</label>
-        <textarea readonly style="width:100%;height:300px">@selectedFileContent</textarea>
+        <textarea readonly style="width:100%;height:300px">@CATselectedFileContent</textarea>
     </div>
 }
 
@@ -76,7 +76,9 @@
     private int searchID = 0;
     private string searchName = string.Empty;
     private string searchCategory = string.Empty;
-    private string selectedFileContent = string.Empty;
+    private string NAMEselectedFileContent = string.Empty;
+    private string IDselectedFileContent = string.Empty;
+    private string CATselectedFileContent = string.Empty;
 
     string IDStatusMessage = string.Empty;
     string NameStatusMessage = string.Empty;
@@ -86,7 +88,13 @@
     {
         var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
         Directory.CreateDirectory(entitiesDir);
-        SearchByName(searchName, entitiesDir);
+        List<Entities> FoundFiles = SearchByName(searchName, entitiesDir);
+        foreach(var result in FoundFiles)
+        {
+            NAMEselectedFileContent = result.FormatItem(result) + "\n";
+            
+        }
+
         NameStatusMessage = $"Searched for Name: {searchName}";
     }
 
@@ -94,16 +102,25 @@
     {
         var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
         Directory.CreateDirectory(entitiesDir);
-        SearchByID(searchID, entitiesDir);
+        List<Entities> FoundFiles = SearchByID(searchID, entitiesDir);
+        foreach (var result in FoundFiles)
+        {
+            IDselectedFileContent = result.FormatItem(result) + "\n";
+            
+        }
         IDStatusMessage = $"Searched for ID: {searchID}";
-
     }
 
     private void FilterCategory()
     {
         var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
         Directory.CreateDirectory(entitiesDir);
-        SearchByCategory(searchCategory, entitiesDir);
+        List<Entities> FoundFiles = SearchByCategory(searchCategory, entitiesDir);
+        foreach (var result in FoundFiles)
+        {
+            CATselectedFileContent = result.FormatItem(result) + "\n";
+            
+        }
         CategoryStatusMessage = $"Searched for Category: {searchCategory}";
     }
 }

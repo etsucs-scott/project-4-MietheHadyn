@@ -38,10 +38,12 @@ namespace _1260FinalProj.Models
         }
 
         public Entities() { } //allows empty entity created, attributed added later
-        public string FormatItem()
+        public string FormatItem(Entities entity)
         {
-            return $" ID: {ID} | Name: {Name} | Category: {Category} | Description: {Description} | Last Updated: {LastUpdateDT}";
+            return $" ID: {entity.ID} | Name: {entity.Name} | Category: {entity.Category} | Description: {entity.Description} | Last Updated: {entity.LastUpdateDT} ";
 
         }
+
+
     }
 }

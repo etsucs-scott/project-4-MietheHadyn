@@ -27,10 +27,9 @@
 </table>
 
 @code {
-   
-    List<string> CategoryNames = new List<string>() { "Person", "Place", "Thing", "Idea" };
 
-   
+    Dictionary<string, int> CategoryCounts = new Dictionary<string, int>();
+    List<string> CategoryNames = new List<string>() { "Person", "Place", "Thing", "Idea" };
     List<object> CatTotals = new List<object>();
 
     protected override async Task OnInitializedAsync()
@@ -39,20 +38,30 @@
         await Task.Delay(500);
 
         //Call the searching logic — keep result unassumed and try to enumerate it
-        var totalsRaw = new Searching().CategoryQTY("wwwroot/Entities", CategoryNames);
+        var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
+        Directory.CreateDirectory(entitiesDir);
+        CategoryCounts = new Searching().CategoryQTY(entitiesDir, CategoryNames);
+        foreach (var cat in CategoryNames)
+        {
+            CategoryCounts.TryGetValue(cat, out int count);
+            CatTotals.Add(new { Category = cat, Count = count });
+        }
+        // var totalsRaw = new Searching().CategoryQTY(entitiesDir, CategoryNames);
 
-        if (totalsRaw is System.Collections.IEnumerable seq)
-        {
-            CatTotals = seq.Cast<object>().ToList();
-        }
-        else if (totalsRaw != null)
-        {
-            CatTotals = new List<object> { totalsRaw };
-        }
-        
+        // if (totalsRaw is System.Collections.IEnumerable seq)
+        // {
+        //     CatTotals = seq.Cast<object>().ToList();
+        // }
+        // else if (totalsRaw != null)
+        // {
+        //     CatTotals = new List<object> { totalsRaw };
+        // }
+
     }
 
-    //Helper to read category name from various possible shapes (string, KeyValuePair, obj w/ properties)
+
+
+    // Helper to read category name from various possible shapes (string, KeyValuePair, obj w/ properties)
     private string GetCategoryName(object o)
     {
         if (o == null) return string.Empty;
@@ -74,30 +83,63 @@
         return o.ToString();
     }
 
-    //Helper to read a numeric value from various possible shapes
-    private string GetCategoryValue(object o)
+    // Helper to read a numeric value from various possible shapes
+    private int GetCategoryValue(object o)
     {
-        if (o == null) return string.Empty;
+        if (o == null) return 0;
 
-        //If the item itself is a numeric type
-        if (o is byte || o is short || o is int || o is long || o is float || o is double || o is decimal)
-            return o.ToString();
+        // If the item itself is an integer or numeric string
+        if (o is int i) return i;
+        if (o is long l) return (int)l;
+        if (o is string s)
+        {
+            // If string is a category name, try to look up in CategoryCounts
+            if (CategoryCounts.TryGetValue(s, out int fromDict)) return fromDict;
+            if (int.TryParse(s, out int parsed)) return parsed;
+            return 0;
+        }
 
+        // Handle KeyValuePair<string,int>
         var t = o.GetType();
+        if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
+        {
+            var valueProp = t.GetProperty("Value");
+            if (valueProp != null)
+            {
+                var val = valueProp.GetValue(o);
+                if (val is int vi) return vi;
+                if (val is long vl) return (int)vl;
+                if (int.TryParse(val?.ToString(), out int parsed)) return parsed;
+            }
+        }
 
-        var prop = t.GetProperty("value")
+        // Common property names that may hold the count
+        var prop = t.GetProperty("Count")
                    ?? t.GetProperty("Value")
-                   ?? t.GetProperty("Count")
                    ?? t.GetProperty("Qty")
-                   ?? t.GetProperty("Quantity")
-                   ?? t.GetProperty("Amount");
+                   ?? t.GetProperty("Number")
+                   ?? t.GetProperty("CountValue");
         if (prop != null)
         {
             var val = prop.GetValue(o);
-            return val?.ToString() ?? string.Empty;
+            if (val is int vi) return vi;
+            if (val is long vl) return (int)vl;
+            if (int.TryParse(val?.ToString(), out int parsed)) return parsed;
         }
 
-        
-        return string.Empty;
+        // If the object is an enumerable of key/value or strings try to find first matching category
+        if (o is System.Collections.IDictionary dict)
+        {
+            foreach (var cat in CategoryNames)
+            {
+                if (dict.Contains(cat) && dict[cat] is int di) return di;
+                if (dict.Contains(cat) && int.TryParse(dict[cat]?.ToString(), out int parsed)) return parsed;
+            }
+        }
+
+        // Fallback: try parsing ToString
+        if (int.TryParse(o.ToString(), out int fallback)) return fallback;
+
+        return 0;
     }
 }

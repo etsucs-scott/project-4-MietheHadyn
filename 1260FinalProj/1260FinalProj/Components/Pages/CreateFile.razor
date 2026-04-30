@@ -96,6 +96,7 @@
 
             var fileName = $"entity_{Model?.Name}.txt";
             var filePath = Path.Combine(entitiesDir, fileName);
+            DateTime LastUpdate = DateTime.UtcNow; //Update LastUpdate field to current time
 
             var content = $"ID: {Model?.ID}|Name: {Model?.Name}|Category: {Model?.Category}|Description: {Model?.Description}|LastUpdate: {Model?.LastUpdateDT}";
             File.WriteAllText(filePath, content);

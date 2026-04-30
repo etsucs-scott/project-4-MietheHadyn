@@ -34,7 +34,6 @@ namespace _1260FinalProj.Logic
                     sw.WriteLine(Entry); //Entry should be '|'-separated
 
                 }
-                Console.WriteLine("File created.");
             }
             catch (Exception ex)
             {
@@ -43,7 +42,7 @@ namespace _1260FinalProj.Logic
         }
 
 
-        public void EditFile(int ID, string Name, string Category, string Description, DateTime LastUpdate) //do I use ItemPath as a parameter?
+        public void EditFile(int ID, string Name, string Category, string Description, DateTime LastUpdate, string Entitypath) 
         {
             //i need a way to tell it to look at a pre-existing file, not create a new one
             try
