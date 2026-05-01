@@ -1,6 +1,10 @@
 using _1260FinalProj.Components;
+using _1260FinalProj.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Register the singleton service
+builder.Services.AddSingleton<SingletonSearchService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
