@@ -1,5 +1,4 @@
 ﻿using _1260FinalProj.Models;
-using System.Xml.Linq;
 
 namespace _1260FinalProj.Logic
 {
@@ -97,9 +96,9 @@ namespace _1260FinalProj.Logic
         }
 
 
-        public static List<Entities> SearchByName(string Name, string Entitypath) 
+        public static List<Entities> SearchByName(string Name, string Entitypath)
         {
-            
+
             List<Entities> FoundFiles = new List<Entities>();
             IEnumerable<string> filesToSearch;
 
@@ -144,7 +143,7 @@ namespace _1260FinalProj.Logic
                                 if (int.TryParse(value, out var parsedId))
                                 {
                                     entity.ID = parsedId;
-                                    
+
                                 }
                             }
                             else if (key.Equals("Name", StringComparison.OrdinalIgnoreCase))
@@ -191,9 +190,9 @@ namespace _1260FinalProj.Logic
 
 
 
-        public static List<Entities> SearchByCategory(string Category, string Entitypath) 
+        public static List<Entities> SearchByCategory(string Category, string Entitypath)
         {
-            
+
             List<Entities> FoundFiles = new List<Entities>();
             IEnumerable<string> filesToSearch;
 
@@ -257,7 +256,7 @@ namespace _1260FinalProj.Logic
                             else if (key.Equals("LastUpdate", StringComparison.OrdinalIgnoreCase))
                             {
                                 if (int.TryParse(value, out var lu))
-                                { 
+                                {
                                     entity.LastUpdate = lu;
                                     entity.LastUpdateDT = new DateTime(1970, 1, 1).AddSeconds(lu);
                                 }
@@ -283,55 +282,119 @@ namespace _1260FinalProj.Logic
             return FoundFiles;
         }
 
-        public Dictionary<string, int> CategoryQTY(string Entitypath, List<string> Categories)
+
+        public List<string> GetCategoryNames(string entitiesDir)
+        {
+            List<string> FileCats = new List<string>();
+
+            List<Entities> FoundFiles = new List<Entities>();
+            IEnumerable<string> filesToSearch;
+
+            if (Directory.Exists(entitiesDir))
+            {
+                filesToSearch = Directory.EnumerateFiles(entitiesDir, "*.txt", SearchOption.TopDirectoryOnly);
+            }
+            else if (File.Exists(entitiesDir))
+            {
+                filesToSearch = new[] { entitiesDir };
+            }
+            else
+            {
+                //nothing to search
+                return FileCats;
+            }
+
+            foreach (var file in filesToSearch)
+            {
+                try
+                {
+                    using var reader = new StreamReader(file);
+                    while (!reader.EndOfStream)
+                    {
+                        var line = reader.ReadLine();
+                        if (string.IsNullOrWhiteSpace(line)) continue;
+
+                        var entity = new Entities();
+                        var parts = line.Split('|');
+                        
+                        foreach (var part in parts)
+                        {
+                            var kv = part.Split(new[] { ':' }, 2);
+                            if (kv.Length < 2) continue;
+                            var key = kv[0].Trim();
+                            var value = kv[1].Trim();
+
+                            if (key.Equals("Category", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (FileCats.Contains(value, StringComparer.OrdinalIgnoreCase))
+                                    continue; //already have this category
+                                else
+                                {
+                                    FileCats.Add(value);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    // skip unreadable files (or log)
+                    continue;
+                }
+                catch (IOException)
+                {
+                    continue;
+                }
+            }
+            return FileCats.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        }
+
+        
+        public Dictionary<string, int> CategoryQTY(string Entitypath, List<string> FileCats)
         {
             var categoryCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
             //initialize counts requested categories
-            foreach (var cat in Categories)
+            foreach (var cat in FileCats)
             {
                 categoryCounts[cat] = 0;
             }
 
-            if (!File.Exists(Entitypath))
+            //If path is directory, process each file inside
+            while (Directory.Exists(Entitypath))
             {
-                //return initial counts
-                return categoryCounts;
-            }
-
-            using (var reader = new StreamReader(Entitypath))
-            {
-                while (!reader.EndOfStream)
+                var files = Directory.GetFiles(Entitypath, "*.*", SearchOption.TopDirectoryOnly);
+                foreach (var file in files)
                 {
-                    var line = reader.ReadLine();
-                    if (string.IsNullOrWhiteSpace(line)) continue;
-
-                    string[] parts = line.Split('|');
-                    foreach (var part in parts)
+                    using (var reader = new StreamReader(file))
                     {
-                        string[] keyValue = part.Split(new[] { ':' }, 2);
-                        if (keyValue.Length < 2) continue;
-
-                        string key = keyValue[0].Trim();
-                        string value = keyValue[1].Trim();
-
-                        if (key.Equals("Category", StringComparison.OrdinalIgnoreCase))
+                        while (!reader.EndOfStream)
                         {
-                            //increment category in provided list
-                            if (categoryCounts.ContainsKey(value))
-                                categoryCounts[value]++;
-                            //track new categories
-                            else categoryCounts[value] = categoryCounts.GetValueOrDefault(value, 0) + 1;
+                            var line = reader.ReadLine();
+                            if (string.IsNullOrWhiteSpace(line)) continue;
 
-                            break; //stop checking other parts of this file
+                            string[] parts = line.Split('|');
+                            foreach (var part in parts)
+                            {
+                                string[] keyValue = part.Split(new[] { ':' }, 2);
+                                if (keyValue.Length < 2) continue;
+
+                                string key = keyValue[0].Trim();
+                                string value = keyValue[1].Trim();
+
+                                if (key.Equals("Category", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    if (categoryCounts.ContainsKey(value))
+                                        categoryCounts[value]++;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
             }
-
             return categoryCounts;
+
         }
-
-
     }
 }

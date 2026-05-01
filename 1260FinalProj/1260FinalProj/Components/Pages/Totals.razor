@@ -16,51 +16,55 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in CatTotals.Any() ? CatTotals : CategoryNames.Cast<object>())
+        @foreach (var item in CatTotals)
         {
             <tr>
-                <td>@GetCategoryName(item)</td>
-                <td>@GetCategoryValue(item)</td>
+                <td>@item.Category</td>
+                <td>@item.Count</td>
             </tr>
         }
     </tbody>
-</table>
-
+</table> 
+@*THIS DOESN'T FUCKING WORK,APPARENTLY. THE TABLE IS ENTIRELY BLANK. FUCK. IT'S BEEN DAYS. 
+    NOTHING WORKS APPARENTLY GODDAMNIT*@
 @code {
 
+    //holder to avoid accessing properties on System.Object
+    private class CategoryTotal
+    {
+        public string Category { get; set; } = string.Empty;
+        public int Count { get; set; }
+    }
+
     Dictionary<string, int> CategoryCounts = new Dictionary<string, int>();
-    List<string> CategoryNames = new List<string>() { "Person", "Place", "Thing", "Idea" };
-    List<object> CatTotals = new List<object>();
+    List<string> CategoryNames = new List<string>() /*{ "Person", "Place", "Thing", "Idea" }*/;
+    List<CategoryTotal> CatTotals = new List<CategoryTotal>();
 
     protected override async Task OnInitializedAsync()
     {
-        //Simulate asynchronous loading to demonstrate streaming rendering
+        // Simulate asynchronous loading to demonstrate streaming rendering
         await Task.Delay(500);
 
-        //Call the searching logic — keep result unassumed and try to enumerate it
         var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
         Directory.CreateDirectory(entitiesDir);
-        CategoryCounts = new Searching().CategoryQTY(entitiesDir, CategoryNames);
-        foreach (var cat in CategoryNames)
-        {
-            CategoryCounts.TryGetValue(cat, out int count);
-            CatTotals.Add(new { Category = cat, Count = count });
-        }
-        // var totalsRaw = new Searching().CategoryQTY(entitiesDir, CategoryNames);
 
-        // if (totalsRaw is System.Collections.IEnumerable seq)
-        // {
-        //     CatTotals = seq.Cast<object>().ToList();
-        // }
-        // else if (totalsRaw != null)
-        // {
-        //     CatTotals = new List<object> { totalsRaw };
-        // }
+        //Get category names 
+        CategoryNames = new Searching().GetCategoryNames(entitiesDir) ?? new List<string>();
 
+        //Get category counts
+        CategoryCounts = new Searching().CategoryQTY(entitiesDir, CategoryNames)
+                         ?? new Dictionary<string, int>();
+
+        //Build a typed list for binding (keep CategoryCounts as a Dictionary)
+        CatTotals = CategoryNames
+            .Select(cat => new CategoryTotal { Category = cat, Count = CategoryCounts.TryGetValue(cat, out var c) ? c : 0 })
+            .ToList();
+
+        //Force UI refresh if needed
+        StateHasChanged();
     }
 
-
-
+    
     // Helper to read category name from various possible shapes (string, KeyValuePair, obj w/ properties)
     private string GetCategoryName(object o)
     {
@@ -69,8 +73,7 @@
 
         var t = o.GetType();
 
-        var prop = t.GetProperty("Category") 
-                   ?? t.GetProperty("Category")
+        var prop = t.GetProperty("Category")
                    ?? t.GetProperty("Key")
                    ?? t.GetProperty("Name");
         if (prop != null)
@@ -141,5 +144,5 @@
         if (int.TryParse(o.ToString(), out int fallback)) return fallback;
 
         return 0;
-    }
+    } 
 }
