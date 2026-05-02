@@ -3,8 +3,9 @@
 @using System.Linq
 @using _1260FinalProj.Logic
 @using _1260FinalProj.Models
+@using _1260FinalProj.Services
 @inject IWebHostEnvironment Env
-@inject _1260FinalProj.Services.SingletonSearchService singletonSearchService
+@inject SingletonSearchService singletonSearchService
 @attribute [StreamRendering]
 
 <h3>Totals</h3>
@@ -38,7 +39,7 @@
     }
 
     Dictionary<string, int> CategoryCounts = new Dictionary<string, int>();
-    List<string> CategoryNames = new List<string>() /*{ "Person", "Place", "Thing", "Idea" }*/;
+    List<string> CategoryNames = new List<string>() /*{ "Person", "Place", "Thing", "Idea" }*/; //this, with the 
     List<CategoryTotal> CatTotals = new List<CategoryTotal>();
 
     protected override async Task OnInitializedAsync()

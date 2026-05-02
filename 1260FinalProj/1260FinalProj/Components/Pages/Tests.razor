@@ -1,0 +1,27 @@
+﻿@using _1260FinalProj.Models;
+@using _1260FinalProj.Logic;
+@using static _1260FinalProj.Logic.LogicUnitTests;
+@using static _1260FinalProj.Logic.PageUnitTests;
+@using static _1260FinalProj.Logic.Searching;
+@using Xunit;
+@inject IWebHostEnvironment Env
+
+<h3>UnitTests</h3>
+
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
+        Directory.CreateDirectory(entitiesDir);
+
+        //logic
+        TestNAMESearch(entitiesDir);
+        TestIDSearch(entitiesDir);
+        TestCATEGORYSearch(entitiesDir);
+
+        //page
+
+    }
+
+}

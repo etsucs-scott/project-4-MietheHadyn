@@ -5,7 +5,7 @@ namespace _1260FinalProj.Services //Singleton service???
     public class SingletonSearchService
     {
         public Guid InstanceId { get; } = Guid.NewGuid();
-        public Searching SingleSearch = new Searching(); //search instancer
+        
 
 
     }
