@@ -44,7 +44,7 @@ namespace _1260FinalProj.Logic
 
         public void EditFile(int ID, string Name, string Category, string Description, DateTime LastUpdate, string Entitypath) 
         {
-            //i need a way to tell it to look at a pre-existing file, not create a new one
+            LoadFile(Entitypath);
             try
             {
                 //update file stuff, depending on what field is changed, but also update the LastUpdate field to current time
@@ -118,7 +118,24 @@ namespace _1260FinalProj.Logic
             }
         }
 
+        public void DeleteFile(string Entitypath, string FileName)
+        {
+            Entities FoundFile = new Entities();
+            IEnumerable<string> filesToSearch;
 
+            if (Directory.Exists(Entitypath))
+            {
+                filesToSearch = Directory.EnumerateFiles(Entitypath, "*.txt", SearchOption.TopDirectoryOnly);
+            }
+            else if (File.Exists(Entitypath))
+            {
+                filesToSearch = new[] { Entitypath };
+
+            }
+
+            File.Delete(Entitypath);
+
+        }
     }
 
 }

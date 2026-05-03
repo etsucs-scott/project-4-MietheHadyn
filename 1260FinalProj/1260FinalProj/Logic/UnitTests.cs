@@ -1,11 +1,12 @@
 ﻿using _1260FinalProj.Models;
 using NUnit.Framework;
+using System.Xml.Linq;
 using Xunit;
 
 
 namespace _1260FinalProj.Logic
 {
-    public class LogicUnitTests
+    public class UnitTestService
     {
         //logic tests
         public Searching search = new Searching();
@@ -16,7 +17,7 @@ namespace _1260FinalProj.Logic
             string searchName = "John Doe";
             string NAMEselectedFileContentTEST = string.Empty;
             List<Entities> FoundFiles = Searching.SearchByName(searchName, entitiesDir);
-            string correctResult = "ID: 879|Name: John Doe|Category: Person|Description: This is the most regular guy to exist. He also exists to diversify the Category results.|LastUpdate: 4/27/2026 1:24:00 PM";
+            string correctResult = "ID: 879 | Name: John Doe| Category: Person | Description: This is the most regular guy to exist. He also exists to diversify the Category results.| LastUpdate: 4/27/2026 1:24:00 PM";
 
             //act
             foreach (var result in FoundFiles)
@@ -63,12 +64,63 @@ namespace _1260FinalProj.Logic
             Assert.True(CATEGORYselectedFileContentTEST == correctResult);
         }
 
+        [Fact]
+        public static void TestCreateFile(string entitiesDir)
+        {
+            //arrange
+            int ID = 123;
+            string Name = "Test Entity";
+            string Category = "Test Category";
+            string Description = "This is a test entity.";
+            DateTime LastUpdate = DateTime.Now;
+            FileIO fileIO = new FileIO();
+            //act
+            fileIO.CreateFile(ID, Name, Category, Description, LastUpdate);
+            string expectedFilePath = Path.Combine("wwwroot", "Entities", $"Test_Entity_{ID}.txt");
+            bool fileExists = File.Exists(expectedFilePath);
+            //assert
+            Assert.True(fileExists);
+        }
 
+        public static void TestEditFile(string entitiesDir)
+        {
+            //arrange
+            int ID = 1232;
+            string Name = "Test Edit Entity";
+            string Category = "Test Category";
+            string Description = "This is a test entity.";
+            DateTime LastUpdate = DateTime.Now;
+            FileIO fileIO = new FileIO();
+            fileIO.CreateFile(ID, Name, Category, Description, LastUpdate);
+            string expectedFilePath = Path.Combine("wwwroot", "Entities", $"Test_Entity_{ID}.txt");
+            //act
+            string newDescription = "This is an edited test entity.";
+            fileIO.EditFile(ID, Name, Category, newDescription, LastUpdate, expectedFilePath);
+            string[] fileLines = File.ReadAllLines(expectedFilePath);
+            string lastLine = fileLines.Last();
+            //assert
+            Assert.True(lastLine.Contains(newDescription));
+
+        }
+
+        public static void TestDeleteFile(string entitiesDir)
+        {
+            //arrange
+            int ID = 1233;
+            string Name = "Test Delete Entity";
+            string Category = "Test Category";
+            string Description = "This is a test entity.";
+            DateTime LastUpdate = DateTime.Now;
+            FileIO fileIO = new FileIO();
+            fileIO.CreateFile(ID, Name, Category, Description, LastUpdate);
+            string expectedFilePath = Path.Combine("wwwroot", "Entities", $"Test_Entity_{ID}.txt");
+            //act
+            fileIO.DeleteFile(expectedFilePath, Name);
+            bool fileExists = File.Exists(expectedFilePath);
+            //assert
+            Assert.False(fileExists);
+
+        }
     }
-    public class PageUnitTests
-    {
-        //page tests
-
-
-    }
+    
 }

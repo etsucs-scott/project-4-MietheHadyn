@@ -10,6 +10,8 @@
 
 <h3>Totals</h3>
 
+<span>@(CategoryCounts?.Count ?? 0)</span>
+
 <table class="table">
     <thead>
         <tr>
@@ -18,29 +20,19 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in CatTotals)
+        @foreach (var kvp in CategoryCounts ?? Enumerable.Empty<KeyValuePair<string,int>>())
         {
             <tr>
-                <td>@item.Category</td>
-                <td>@item.Count</td>
+                <td>@kvp.Key</td>
+                <td>@kvp.Value</td>
             </tr>
         }
     </tbody>
-</table> 
-@*THIS DOESN'T FUCKING WORK,APPARENTLY. THE TABLE IS ENTIRELY BLANK. FUCK. IT'S BEEN DAYS. 
-    NOTHING WORKS APPARENTLY GODDAMNIT*@
+
+</table>
+
 @code {
-
-    //holder to avoid accessing properties on System.Object
-    private class CategoryTotal
-    {
-        public string Category { get; set; } = string.Empty;
-        public int Count { get; set; }
-    }
-
-    Dictionary<string, int> CategoryCounts = new Dictionary<string, int>();
-    List<string> CategoryNames = new List<string>() /*{ "Person", "Place", "Thing", "Idea" }*/; //this, with the 
-    List<CategoryTotal> CatTotals = new List<CategoryTotal>();
+    private Dictionary<string, int>? CategoryCounts { get; set; } = new Dictionary<string, int>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -50,101 +42,7 @@
         var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
         Directory.CreateDirectory(entitiesDir);
 
-        //Get category names 
-        CategoryNames = new Searching().GetCategoryNames(entitiesDir) ?? new List<string>();
-
-        //Get category counts
-        CategoryCounts = new Searching().CategoryQTY(entitiesDir, CategoryNames)
-                         ?? new Dictionary<string, int>();
-
-        //Build a typed list for binding (keep CategoryCounts as a Dictionary)
-        CatTotals = CategoryNames
-            .Select(cat => new CategoryTotal { Category = cat, Count = CategoryCounts.TryGetValue(cat, out var c) ? c : 0 })
-            .ToList();
-
-        //Force UI refresh if needed
+        CategoryCounts = singletonSearchService.FindTotals(entitiesDir);
         StateHasChanged();
     }
-
-    
-    // Helper to read category name from various possible shapes (string, KeyValuePair, obj w/ properties)
-    private string GetCategoryName(object o)
-    {
-        if (o == null) return string.Empty;
-        if (o is string s) return s;
-
-        var t = o.GetType();
-
-        var prop = t.GetProperty("Category")
-                   ?? t.GetProperty("Key")
-                   ?? t.GetProperty("Name");
-        if (prop != null)
-        {
-            var val = prop.GetValue(o);
-            return val?.ToString() ?? string.Empty;
-        }
-
-        //Fallback to ToString
-        return o.ToString();
-    }
-
-    // Helper to read a numeric value from various possible shapes
-    private int GetCategoryValue(object o)
-    {
-        if (o == null) return 0;
-
-        // If the item itself is an integer or numeric string
-        if (o is int i) return i;
-        if (o is long l) return (int)l;
-        if (o is string s)
-        {
-            // If string is a category name, try to look up in CategoryCounts
-            if (CategoryCounts.TryGetValue(s, out int fromDict)) return fromDict;
-            if (int.TryParse(s, out int parsed)) return parsed;
-            return 0;
-        }
-
-        // Handle KeyValuePair<string,int>
-        var t = o.GetType();
-        if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
-        {
-            var valueProp = t.GetProperty("Value");
-            if (valueProp != null)
-            {
-                var val = valueProp.GetValue(o);
-                if (val is int vi) return vi;
-                if (val is long vl) return (int)vl;
-                if (int.TryParse(val?.ToString(), out int parsed)) return parsed;
-            }
-        }
-
-        // Common property names that may hold the count
-        var prop = t.GetProperty("Count")
-                   ?? t.GetProperty("Value")
-                   ?? t.GetProperty("Qty")
-                   ?? t.GetProperty("Number")
-                   ?? t.GetProperty("CountValue");
-        if (prop != null)
-        {
-            var val = prop.GetValue(o);
-            if (val is int vi) return vi;
-            if (val is long vl) return (int)vl;
-            if (int.TryParse(val?.ToString(), out int parsed)) return parsed;
-        }
-
-        // If the object is an enumerable of key/value or strings try to find first matching category
-        if (o is System.Collections.IDictionary dict)
-        {
-            foreach (var cat in CategoryNames)
-            {
-                if (dict.Contains(cat) && dict[cat] is int di) return di;
-                if (dict.Contains(cat) && int.TryParse(dict[cat]?.ToString(), out int parsed)) return parsed;
-            }
-        }
-
-        // Fallback: try parsing ToString
-        if (int.TryParse(o.ToString(), out int fallback)) return fallback;
-
-        return 0;
-    } 
 }

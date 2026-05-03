@@ -161,11 +161,8 @@ namespace _1260FinalProj.Logic
                             }
                             else if (key.Equals("LastUpdate", StringComparison.OrdinalIgnoreCase))
                             {
-                                if (int.TryParse(value, out var lu))
-                                {
-                                    entity.LastUpdate = lu;
-                                    entity.LastUpdateDT = new DateTime(1970, 1, 1).AddSeconds(lu);
-                                }
+                                DateTime TempDT = DateTime.Parse(value);
+                                entity.LastUpdateDT = TempDT;
                             }
                         }
 
@@ -283,7 +280,7 @@ namespace _1260FinalProj.Logic
         }
 
 
-        public List<string> GetCategoryNames(string entitiesDir)
+        public static List<string> GetCategoryNames(string entitiesDir)
         {
             List<string> FileCats = new List<string>();
 
@@ -350,7 +347,7 @@ namespace _1260FinalProj.Logic
         }
 
         
-        public Dictionary<string, int> CategoryQTY(string Entitypath, List<string> FileCats)
+        public static Dictionary<string, int> CategoryQTY(string Entitypath, List<string> FileCats)
         {
             var categoryCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 

@@ -1,26 +1,62 @@
-﻿@using _1260FinalProj.Models;
+﻿@page "/Tests"
+@using _1260FinalProj.Models;
 @using _1260FinalProj.Logic;
-@using static _1260FinalProj.Logic.LogicUnitTests;
-@using static _1260FinalProj.Logic.PageUnitTests;
+@using static _1260FinalProj.Logic.UnitTestService;
 @using static _1260FinalProj.Logic.Searching;
 @using Xunit;
 @inject IWebHostEnvironment Env
 
 <h3>UnitTests</h3>
 
+@if (!string.IsNullOrEmpty(NameTESTStatusMessage))
+{
+    <p>@NameTESTStatusMessage</p>
+}
+@if (!string.IsNullOrEmpty(IdTESTStatusMessage))
+{
+    <p>@IdTESTStatusMessage</p>
+}
+@if (!string.IsNullOrEmpty(CategoryTESTStatusMessage))
+{
+    <p>@CategoryTESTStatusMessage</p>
+}
+@if (!string.IsNullOrEmpty(CreateTESTStatusMessage))
+{
+    <p>@CreateTESTStatusMessage</p>
+}
+@if (!string.IsNullOrEmpty(EditTESTStatusMessage))
+{
+    <p>@EditTESTStatusMessage</p>
+}
+@if (!string.IsNullOrEmpty(DeleteTESTStatusMessage))
+{
+    <p>@DeleteTESTStatusMessage</p>
+}
 
 @code {
+
+    string NameTESTStatusMessage = String.Empty;
+    string IdTESTStatusMessage = String.Empty;
+    string CategoryTESTStatusMessage = String.Empty;
+    string CreateTESTStatusMessage = String.Empty;
+    string EditTESTStatusMessage = String.Empty;
+    string DeleteTESTStatusMessage = String.Empty;
     protected override async Task OnInitializedAsync()
     {
         var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");
         Directory.CreateDirectory(entitiesDir);
 
-        //logic
-        TestNAMESearch(entitiesDir);
-        TestIDSearch(entitiesDir);
-        TestCATEGORYSearch(entitiesDir);
+        
+        //Tests
+        TestNAMESearch(entitiesDir); NameTESTStatusMessage = "Test complete";
+        TestIDSearch(entitiesDir); IdTESTStatusMessage = "Test complete";
+        TestCATEGORYSearch(entitiesDir); CategoryTESTStatusMessage = "Test complete";
 
-        //page
+        TestCreateFile(entitiesDir); CreateTESTStatusMessage = "Test complete";
+        TestEditFile(entitiesDir); EditTESTStatusMessage = "Test complete";
+        TestDeleteFile(entitiesDir); DeleteTESTStatusMessage = "Test complete";
+
+        
 
     }
 
