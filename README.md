@@ -4,7 +4,7 @@
 ## Build and run 
 ```bash 
 dotnet build 
-dotnet run --project 1260FinalProj.App  
+dotnet run --project 1260FinalProj.dll  
 ``` 
 ###Build and run Unit 
 ```bash 
