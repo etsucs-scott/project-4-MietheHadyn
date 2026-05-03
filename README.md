@@ -1,43 +1,37 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/qJo95Bxr)
 # CSCI 1260 — Project
 
-## Project Instructions
-All project requirements, grading criteria, and submission details are provided on **D2L**.  
-Refer to D2L as the *authoritative source* for this assignment.
-
-This repository is intentionally minimal. You are responsible for:
-- Creating the solution and projects
-- Designing the class structure
-- Implementing the required functionality
-
----
-
-## Getting Started (CLI)
-
-You may use **Visual Studio**, **VS Code**, or the **terminal**.
-
-### Create a solution
-```bash
-dotnet new sln -n ProjectName
+## Build and run 
+```bash 
+dotnet build 
+dotnet run --project 1260FinalProj.dll  
+``` 
+###Build and run Unit 
+```bash 
+dotnet build 
+dotnet test --project 1260FinalProj.App 
 ```
+## Unit tests 
 
-### Create a project (example: console app)
-```bash
-dotnet new console -n ProjectName.App
-```
+The Unit tests are used to verify that certain processes work within the program. 
 
-### Add the project to the solution
-```bash
-dotnet sln add ProjectName.App
-```
+## Tech Stacks Setup Steps 
 
-### Build and run
-```bash
-dotnet build
-dotnet run --project ProjectName.App
-```
+This project works and runs within a browser, as it is a web app. [is this what he meant?] 
 
-## Notes
-- Commit early and commit often.
-- Your repository history is part of your submission.
-- Update this README with build/run instructions specific to your project.
+## Key Features & Data Storage 
+
+### Key Features 
+
+The key features of this project are File creation, searching, and quantifying.  
+
+### Data Storage 
+
+Data, mostly in the form of the created or pre-existing Entity files, is stored in the project itself, in the ‘wwwroot’ folder. Created files will persist in said ‘wwwroot’ folder, even once closing the program.  
+
+## UML
+The UML gives visualization to the interactions going on behind the scenes while the program runs. Note that the UML, since it’s a class UML that pays attention to the back-end, it does not use or include any of the GUI elements 
+
+## Citations 
+Most code, base logic, and workflow done by me. Some debugging assistance and minor code generation (as part of the debugging process) done with the assistance of GitHub Copilot; help also provided by Professor Scott. 
+ 
