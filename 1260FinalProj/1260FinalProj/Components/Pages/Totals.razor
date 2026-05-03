@@ -36,7 +36,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Simulate asynchronous loading to demonstrate streaming rendering
+        //Simulate asynchronous loading to demonstrate streaming rendering
         await Task.Delay(500);
 
         var entitiesDir = Path.Combine(Env.WebRootPath ?? Env.ContentRootPath, "Entities");

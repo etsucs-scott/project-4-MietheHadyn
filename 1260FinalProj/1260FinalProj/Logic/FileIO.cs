@@ -47,7 +47,7 @@ namespace _1260FinalProj.Logic
             LoadFile(Entitypath);
             try
             {
-                //update file stuff, depending on what field is changed, but also update the LastUpdate field to current time
+                //Inputs to update file provided through GUI
 
                 LastUpdate = DateTime.Now;
             }
@@ -63,8 +63,7 @@ namespace _1260FinalProj.Logic
 
         public void LoadFile(string EntityPath)
         {
-            //pulls info from files, into the appropriate fields for the entities
-
+            
             try
             {
 

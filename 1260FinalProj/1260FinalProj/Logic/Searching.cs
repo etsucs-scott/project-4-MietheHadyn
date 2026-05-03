@@ -45,7 +45,7 @@ namespace _1260FinalProj.Logic
                             var key = kv[0].Trim();
                             var value = kv[1].Trim();
 
-                            // populate all fields for this line
+                            //populate all fields for this line
                             if (key.Equals("ID", StringComparison.OrdinalIgnoreCase))
                             {
                                 if (int.TryParse(value, out var parsedId))
@@ -70,20 +70,19 @@ namespace _1260FinalProj.Logic
                             {
                                 if (int.TryParse(value, out var lu))
                                 {
-                                    entity.LastUpdate = lu;
-                                    entity.LastUpdateDT = new DateTime(1970, 1, 1).AddSeconds(lu);
+                                    DateTime TempDT = DateTime.Parse(value);
+                                    entity.LastUpdateDT = TempDT;
                                 }
                             }
                         }
 
-                        // add the fully-populated entity only if it matched
                         if (isMatch)
                             FoundFiles.Add(entity);
                     }
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    // skip unreadable files (or log)
+                    //skip unreadable files
                     continue;
                 }
                 catch (IOException)
@@ -166,14 +165,14 @@ namespace _1260FinalProj.Logic
                             }
                         }
 
-                        // add the fully-populated entity only if it matched
+                        
                         if (isMatch)
                             FoundFiles.Add(entity);
                     }
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    // skip unreadable files (or log)
+                    //skip unreadable files
                     continue;
                 }
                 catch (IOException)
@@ -254,20 +253,20 @@ namespace _1260FinalProj.Logic
                             {
                                 if (int.TryParse(value, out var lu))
                                 {
-                                    entity.LastUpdate = lu;
-                                    entity.LastUpdateDT = new DateTime(1970, 1, 1).AddSeconds(lu);
+                                    DateTime TempDT = DateTime.Parse(value);
+                                    entity.LastUpdateDT = TempDT;
                                 }
                             }
                         }
 
-                        // add the fully-populated entity only if it matched
+                        //add the fully-populated entity only if it matched
                         if (isMatch)
                             FoundFiles.Add(entity);
                     }
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    // skip unreadable files (or log)
+                    //skip unreadable files (or log)
                     continue;
                 }
                 catch (IOException)
@@ -335,7 +334,7 @@ namespace _1260FinalProj.Logic
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    // skip unreadable files (or log)
+                    //skip unreadable files
                     continue;
                 }
                 catch (IOException)

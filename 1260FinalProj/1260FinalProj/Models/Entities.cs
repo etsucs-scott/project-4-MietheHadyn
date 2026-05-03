@@ -29,7 +29,7 @@ namespace _1260FinalProj.Models
 
         public Entities(int v1, string v2, string v3, string v4)
         {
-            this.ID = new Random().Next(1, 1000000); //simple way to generate random ID. figure a better way to ensure uniqueness later
+            this.ID = new Random().Next(1, 1000000); //simple way to generate random ID
             this.Name = v2;
             this.Category = v3;
             this.Description = v4;
